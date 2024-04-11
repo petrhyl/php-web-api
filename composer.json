@@ -1,0 +1,14 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Core\\":"./",
+            "Core\\Http\\": "./http/",
+            "Core\\Routes\\": "./routes/",
+            "Core\\Routes\\Callables\\": "./routes/callables/",
+            "Core\\Container\\": "./container/",
+            "Core\\Util\\": "./util/",
+            "Core\\Interfaces\\": "./interfaces/",
+            "Core\\Exceptions\\": "./exceptions/"
+        }
+    }
+}
