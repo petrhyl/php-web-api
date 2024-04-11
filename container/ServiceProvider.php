@@ -1,11 +1,11 @@
 <?php
 
-namespace Core\Container;
+namespace WebApiCore\Container;
 
 use ArgumentCountError;
 use Exception;
-use Core\Container\ServiceCollection;
-use Core\Container\ServiceDescriptor;
+use WebApiCore\Container\ServiceCollection;
+use WebApiCore\Container\ServiceDescriptor;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;

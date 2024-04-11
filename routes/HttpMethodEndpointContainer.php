@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Routes;
+namespace WebApiCore\Routes;
 
-use Core\Routes\EndpointNode;
+use WebApiCore\Routes\EndpointNode;
 
 class HttpMethodEndpointContainer
 {

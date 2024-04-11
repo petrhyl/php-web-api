@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Util;
+namespace WebApiCore\Util;
 
 use ReflectionClass;
 

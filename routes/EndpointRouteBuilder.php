@@ -1,12 +1,12 @@
 <?php
 
-namespace Core\Routes;
+namespace WebApiCore\Routes;
 
-use Core\Exceptions\ApplicationException;
-use Core\Routes\Callables\IEndpoint;
-use Core\Routes\Callables\IMiddleware;
-use Core\Routes\EndpointResult;
-use Core\Routes\EndpointNode;
+use WebApiCore\Exceptions\ApplicationException;
+use WebApiCore\Routes\Callables\IEndpoint;
+use WebApiCore\Routes\Callables\IMiddleware;
+use WebApiCore\Routes\EndpointResult;
+use WebApiCore\Routes\EndpointNode;
 use ReflectionClass;
 
 class EndpointRouteBuilder

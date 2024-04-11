@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Routes;
+namespace WebApiCore\Routes;
 
 class EndpointResult
 {

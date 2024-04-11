@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Routes\Callables;
+namespace WebApiCore\Routes\Callables;
 
-use Core\Http\HttpRequest;
+use WebApiCore\Http\HttpRequest;
 
 interface IMiddleware
 {

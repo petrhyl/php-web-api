@@ -1,13 +1,13 @@
 <?php
 
-namespace Core;
+namespace WebApiCore;
 
-use Core\Container\ServiceProvider;
-use Core\Exceptions\ApplicationException;
-use Core\Http\HttpRequest;
-use Core\Routes\Callables\IMiddleware;
-use Core\Routes\EndpointRouteBuilder;
-use Core\Util\Converter;
+use WebApiCore\Container\ServiceProvider;
+use WebApiCore\Exceptions\ApplicationException;
+use WebApiCore\Http\HttpRequest;
+use WebApiCore\Routes\Callables\IMiddleware;
+use WebApiCore\Routes\EndpointRouteBuilder;
+use WebApiCore\Util\Converter;
 use Exception;
 use ReflectionClass;
 use ReflectionMethod;
@@ -25,7 +25,7 @@ class App
     public static HttpRequest $request;
 
     /**
-     * @var \Core\Interfaces\IMiddleware[] middlewares which are invoke for each request 
+     * @var \WebApiCore\Interfaces\IMiddleware[] middlewares which are invoke for each request 
      */
     private array $middlewares = [];
 

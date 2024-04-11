@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Routes;
+namespace WebApiCore\Routes;
 
-use Core\Interfaces\IMiddleware;
+use WebApiCore\Interfaces\IMiddleware;
 
 class EndpointNode
 {

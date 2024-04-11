@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Http;
+namespace WebApiCore\Http;
 
 class HttpUser
 {

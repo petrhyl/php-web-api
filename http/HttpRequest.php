@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Http;
+namespace WebApiCore\Http;
 
-use Core\Http\HttpUser;
+use WebApiCore\Http\HttpUser;
 
 class HttpRequest
 {

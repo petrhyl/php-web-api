@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Container;
+namespace WebApiCore\Container;
 
 class ServiceDescriptor
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Core\Container;
+namespace WebApiCore\Container;
 
-use Core\App;
+use WebApiCore\App;
 use Exception;
-use Core\Container\ServiceCollection;
-use Core\Container\ServiceDescriptor;
-use Core\Routes\EndpointRouteBuilder;
+use WebApiCore\Container\ServiceCollection;
+use WebApiCore\Container\ServiceDescriptor;
+use WebApiCore\Routes\EndpointRouteBuilder;
 
 class Container
 {

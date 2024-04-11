@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Exceptions;
+namespace WebApiCore\Exceptions;
 
 use Exception;
 use Throwable;
