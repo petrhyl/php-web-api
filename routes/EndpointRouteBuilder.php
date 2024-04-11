@@ -3,7 +3,6 @@
 namespace WebApiCore\Routes;
 
 use WebApiCore\Exceptions\ApplicationException;
-use WebApiCore\Routes\Callables\IEndpoint;
 use WebApiCore\Routes\Callables\IMiddleware;
 use WebApiCore\Routes\EndpointResult;
 use WebApiCore\Routes\EndpointNode;
@@ -65,26 +64,91 @@ class EndpointRouteBuilder
         $node->setMiddlewares($middlewares);
     }
 
+    /**
+     * @param string $path path of an endpoint - might contains parameter's name written between curly braces
+     * 
+     * @param string $endpointClass fully qualified name of the endpoint class 
+     * - endpoint's class has to contain magic method `__invoke()`
+     * - `__invoke()` method may have parameters named as:
+     * 1) `payload` - this is request body object
+     * 2) `query` - this is object created from url query params
+     * 3)  parameter written in url path to this endpoint
+     * 
+     * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
+     * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
+     */
     public function get(string $path, string $endpointClass, array $middlewares = []): void
     {
         $this->add('get', $path, $endpointClass, $middlewares);
     }
 
+     /**
+     * @param string $path path of an endpoint - might contains parameter's name written between curly braces
+     * 
+     * @param string $endpointClass fully qualified name of the endpoint class 
+     * - endpoint's class has to contain magic method `__invoke()`
+     * - `__invoke()` method may have parameters named as:
+     * 1) `payload` - this is request body object
+     * 2) `query` - this is object created from url query params
+     * 3)  parameter written in url path to this endpoint
+     * 
+     * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
+     * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
+     */
     public function post(string $path, string $endpointClass, array $middlewares = []): void
     {
         $this->add('post', $path, $endpointClass, $middlewares);
     }
 
+     /**
+     * @param string $path path of an endpoint - might contains parameter's name written between curly braces
+     * 
+     * @param string $endpointClass fully qualified name of the endpoint class 
+     * - endpoint's class has to contain magic method `__invoke()`
+     * - `__invoke()` method may have parameters named as:
+     * 1) `payload` - this is request body object
+     * 2) `query` - this is object created from url query params
+     * 3)  parameter written in url path to this endpoint
+     * 
+     * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
+     * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
+     */
     public function put(string $path, string $endpointClass, array $middlewares = []): void
     {
         $this->add('put', $path, $endpointClass, $middlewares);
     }
 
+     /**
+     * @param string $path path of an endpoint - might contains parameter's name written between curly braces
+     * 
+     * @param string $endpointClass fully qualified name of the endpoint class 
+     * - endpoint's class has to contain magic method `__invoke()`
+     * - `__invoke()` method may have parameters named as:
+     * 1) `payload` - this is request body object
+     * 2) `query` - this is object created from url query params
+     * 3)  parameter written in url path to this endpoint
+     * 
+     * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
+     * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
+     */
     public function patch(string $path, string $endpointClass, array $middlewares = []): void
     {
         $this->add('patch', $path, $endpointClass, $middlewares);
     }
 
+     /**
+     * @param string $path path of an endpoint - might contains parameter's name written between curly braces
+     * 
+     * @param string $endpointClass fully qualified name of the endpoint class 
+     * - endpoint's class has to contain magic method `__invoke()`
+     * - `__invoke()` method may have parameters named as:
+     * 1) `payload` - this is request body object
+     * 2) `query` - this is object created from url query params
+     * 3)  parameter written in url path to this endpoint
+     * 
+     * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
+     * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
+     */
     public function delete(string $path, string $endpointClass, array $middlewares = []): void
     {
         $this->add('delete', $path, $endpointClass, $middlewares);
