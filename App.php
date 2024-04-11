@@ -48,9 +48,9 @@ class App
      * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
      * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
      */
-    public function mapGet(string $path, string $controllerClass, array $middlewares): void
+    public function mapGet(string $path, string $endpointClass, array $middlewares): void
     {
-        $this->router->get($path, $controllerClass, $middlewares);
+        $this->router->get($path, $endpointClass, $middlewares);
     }
 
      /**
@@ -66,9 +66,9 @@ class App
      * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
      * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
      */
-    public function mapPost(string $path, string $controllerClass, array $middlewares): void
+    public function mapPost(string $path, string $endpointClass, array $middlewares): void
     {
-        $this->router->post($path, $controllerClass, $middlewares);
+        $this->router->post($path, $endpointClass, $middlewares);
     }
 
      /**
@@ -84,9 +84,9 @@ class App
      * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
      * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
      */
-    public function mapPut(string $path, string $controllerClass, array $middlewares): void
+    public function mapPut(string $path, string $endpointClass, array $middlewares): void
     {
-        $this->router->put($path, $controllerClass, $middlewares);
+        $this->router->put($path, $endpointClass, $middlewares);
     }
 
      /**
@@ -102,9 +102,9 @@ class App
      * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
      * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called
      */
-    public function mapDelete(string $path, string $controllerClass, array $middlewares): void
+    public function mapDelete(string $path, string $endpointClass, array $middlewares): void
     {
-        $this->router->delete($path, $controllerClass, $middlewares);
+        $this->router->delete($path, $endpointClass, $middlewares);
     }
 
      /**
@@ -120,9 +120,9 @@ class App
      * @param string[] $middlewares fully qualified class' names of middlewares that will be called before the endpoint is called. 
      * Has to implements @see {WebApiCore\Routes\Callables\IMiddleware} whose `invoke()` method will be called.
      */
-    public function mapPatch(string $path, string $controllerClass, array $middlewares): void
+    public function mapPatch(string $path, string $endpointClass, array $middlewares): void
     {
-        $this->router->patch($path, $controllerClass, $middlewares);
+        $this->router->patch($path, $endpointClass, $middlewares);
     }
 
     /**
