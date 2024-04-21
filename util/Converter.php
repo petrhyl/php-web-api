@@ -23,10 +23,6 @@ class Converter
     {
         $properties = $classReflection->getProperties();
 
-        if (count($arr) > count($properties)) {
-            throw new \Exception("Not able to deserialize array into type of " . $classReflection->getName());
-        }
-
         $classInstance = $classReflection->newInstance();
 
         foreach ($properties as $prop) {
@@ -41,10 +37,11 @@ class Converter
                 throw new \Exception("Converting property's type cannot be null");
             }
 
-            if (
-                !array_key_exists($propName, $arr)
-                && (!$propType->allowsNull() || !$prop->hasDefaultValue())
-            ) {
+            if (!array_key_exists($propName, $arr)) {
+                if ($propType->allowsNull() || $prop->hasDefaultValue()) {
+                    continue;
+                }
+
                 throw new \Exception("Not able to deserialize array into type of " . $classInstance::class . ". Missing value for property $propName");
             }
 
