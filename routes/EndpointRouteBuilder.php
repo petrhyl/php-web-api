@@ -41,12 +41,12 @@ class EndpointRouteBuilder
                 break;
             }
 
-            $pathPart = strtolower($pathPart);
-
             $isParam = preg_match('/^{\w+}$/', $pathPart);
 
             if ($isParam) {
                 $pathPart = str_replace(['{', '}'], '', $pathPart);
+            } else {
+                $pathPart = strtolower($pathPart);
             }
 
             $child = $node->getChildNode($pathPart);
