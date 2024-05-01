@@ -16,11 +16,6 @@ class Converter
     {
         $classReflection = new ReflectionClass($class);
 
-        return self::convertArrayToClass($classReflection, $assocArray);
-    }
-
-    private static function convertArrayToClass(ReflectionClass $classReflection, array $arr): object
-    {
         $properties = $classReflection->getProperties();
 
         $classInstance = $classReflection->newInstance();
@@ -37,18 +32,18 @@ class Converter
                 throw new \Exception("Converting property's type cannot be null");
             }
 
-            if (!array_key_exists($propName, $arr)) {
+            if (!array_key_exists($propName, $assocArray)) {
                 if ($propType->allowsNull() || $prop->hasDefaultValue()) {
                     continue;
                 }
 
-                throw new \Exception("Not able to deserialize array into type of " . $classInstance::class . ". Missing value for property $propName");
+                throw new \Exception("Not able to deserialize array into type of '" . $classInstance::class . "'. Missing value for property '$propName'");
             }
 
             if ($propType->isBuiltin()) {
-                $prop->setValue($classInstance, $arr[$propName]);
+                $prop->setValue($classInstance, $assocArray[$propName]);
             } else {
-                $propInstance = self::convertArrayToClass($prop->getDeclaringClass(), $arr[$propName]);
+                $propInstance = self::convertAssocArrayToObject($propType->getName(), $assocArray[$propName]);
                 $prop->setValue($classInstance, $propInstance);
             }
         }
