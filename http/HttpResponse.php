@@ -6,14 +6,18 @@ use ErrorException;
 
 class HttpResponse
 {
-    public function __construct(public ?array $data = null, public ?array $errors = null)
+    public function __construct(public mixed $data = null, public int $statusCode = 200, public ?array $errors = null)
     {
-        if (empty($data) && empty($errors)) {
-            throw new ErrorException("If there is no error the data must be provided.");
-        }
-
-        $this->is_error = !empty($errors);
+        $this->isError = !empty($errors);
     }
 
-    public bool $is_error;
+    public bool $isError;
+
+    public function send(): void
+    {
+        header("Content-type: application/json; charset=UTF-8");
+        http_response_code($this->statusCode);
+        echo json_encode(['data' => $this->data, 'errors' => $this->errors, 'isError' => $this->isError]);
+        die();
+    }
 }

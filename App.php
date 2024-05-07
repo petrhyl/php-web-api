@@ -63,6 +63,9 @@ class App
     }
 
     /**
+     * @param string $className fully-qualified name of required class
+     * @return object instance of a class with all its dependecies from DI container 
+     * or create a new instance if the class is not registered in the container.
      * @throws Exception
      */
     public function getInstance(string $className): object
@@ -77,6 +80,7 @@ class App
     }
 
     /**
+     * Process request to this API - create @see{WebApiCore\Http\HttpRequest}
      * @throws ApplicationException
      */
     public function run(): void
