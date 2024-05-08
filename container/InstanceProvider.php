@@ -4,24 +4,24 @@ namespace WebApiCore\Container;
 
 use ArgumentCountError;
 use Exception;
-use WebApiCore\Container\ServiceCollection;
-use WebApiCore\Container\ServiceDescriptor;
+use WebApiCore\Container\Container;
+use WebApiCore\Container\ClassDescriptor;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 
-class ServiceProvider
+class InstanceProvider
 {
-    public function __construct(private readonly ServiceCollection $serviceCollection)
+    public function __construct(private readonly Container $container)
     {
-        if (empty($serviceCollection)) {
-            throw new ArgumentCountError(ServiceCollection::class . " object is not instantiated.");
+        if (empty($container)) {
+            throw new ArgumentCountError(Container::class . " object is not instantiated.");
         }
     }
 
     public function get(string $class): object
     {
-        $descriptor = $this->serviceCollection->get($class);
+        $descriptor = $this->container->get($class);
 
         if ($descriptor === null) {
             throw new Exception("Target binding [$class] does not exist.");
@@ -40,6 +40,11 @@ class ServiceProvider
 
         if ($class !== $reflectorOfInstance->getName() && !$reflectorOfInstance->implementsInterface($class)) {
             throw new Exception("Implamentation factory did not return instance of class [$class].");
+        }
+
+        if ($descriptor->lifetime === InstanceLifetime::SCOPED) {
+            $descriptor->instance = $instance;
+            $this->container->tryBindDescriptor($class, $descriptor);
         }
 
         return $instance;
@@ -79,7 +84,7 @@ class ServiceProvider
                 } else if ($parameter->isVariadic()) {
                     $dependencies[] = [];
                 } else {
-                    throw new Exception("Unresolvable dependency [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
+                    throw new Exception("Unresolvable dependency of $parameter in class {$parameter->getDeclaringClass()->getName()}");
                 }
             }
 
@@ -94,8 +99,8 @@ class ServiceProvider
                     $dependencies[] = $parameter->getDefaultValue();
                 } else {
                     $dependency = $this->build($name);
-                    $descriptor = new ServiceDescriptor(fn () => $this->build($name));
-                    $this->serviceCollection->add($name, $descriptor);
+                    $descriptor = new ClassDescriptor(InstanceLifetime::TRANSIENT, fn () => $this->build($name));
+                    $this->container->bindDescriptor($name, $descriptor);
                     $dependencies[] = $dependency;
                 }
             }

@@ -2,7 +2,6 @@
 
 namespace WebApiCore;
 
-use WebApiCore\Container\ServiceProvider;
 use WebApiCore\Exceptions\ApplicationException;
 use WebApiCore\Http\HttpRequest;
 use WebApiCore\Routes\Callables\IMiddleware;
@@ -12,12 +11,13 @@ use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
+use WebApiCore\Container\InstanceProvider;
 use WebApiCore\Routes\EndpointProvider;
 
 class App
 {
     public function __construct(
-        private readonly ServiceProvider $serviceProvider,
+        private readonly InstanceProvider $instanceProvider,
         private EndpointRouteBuilder $router
     ) {
         if (empty($router)) {
@@ -71,11 +71,11 @@ class App
     public function getInstance(string $className): object
     {
         try {
-            $instance = $this->serviceProvider->get($className);
+            $instance = $this->instanceProvider->get($className);
 
             return $instance;
         } catch (Exception $e) {
-            return $this->serviceProvider->build($className);
+            return $this->instanceProvider->build($className);
         }
     }
 

@@ -1,0 +1,39 @@
+<?php
+
+namespace WebApiCore\Container;
+
+use WebApiCore\App;
+use Exception;
+use WebApiCore\Routes\EndpointRouteBuilder;
+
+class AppBuilder
+{
+    private static ?AppBuilder $appBuilder = null;
+
+    private function __construct()
+    {
+        $this->Services = new Container();
+    }
+
+    public readonly Container $Services;
+
+    public static function createBuilder(): AppBuilder
+    {
+        if (self::$appBuilder !== null) {
+            throw new Exception('Application builder is already created.');
+        }
+
+        self::$appBuilder = new AppBuilder();
+
+        return self::$appBuilder;
+    }
+
+    public function buildApp(): App
+    {
+        $provider = new InstanceProvider($this->Services);
+
+        $router = $provider->build(EndpointRouteBuilder::class);
+
+        return new App($provider, $router);
+    }
+}
