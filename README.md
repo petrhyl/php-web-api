@@ -1,6 +1,6 @@
 # REST Web API - PHP
 
-This is a framework with simple core functionalities from creating RESTful web API in PHP language.
+This is a framework with simple core functionalities for creating RESTful web API in PHP language.
 
 ## Core functionalities
 1. DI container
