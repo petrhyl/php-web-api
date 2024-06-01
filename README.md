@@ -5,7 +5,7 @@ This is a framework with simple core functionalities for creating RESTful web AP
 ## Core functionalities
 1. DI container
    - enables binding factory function to call new instance of a class
-   - factory function contains 'ServiceProvider' class as a parameter to call already bound classes or create new class instance independent of the container
+   - factory function contains 'InstanceProvider' class as a parameter to call already bound classes or create new class instance independent of the container
 
 2. Endpoint routes builder
    - maps url path to an endpoint's class that will be called on request - using methods named as same as http methods
