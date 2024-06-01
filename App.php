@@ -13,6 +13,7 @@ use ReflectionMethod;
 use ReflectionParameter;
 use WebApiCore\Container\InstanceProvider;
 use WebApiCore\Routes\EndpointProvider;
+use WebApiCore\Routes\EndpointResult;
 
 class App
 {
@@ -83,7 +84,7 @@ class App
      * Process request to this API - create @see{WebApiCore\Http\HttpRequest}
      * @throws ApplicationException
      */
-    public function run(): void
+    public function process(): void
     {
         static::$request = $this->initRequest();
 
@@ -95,17 +96,14 @@ class App
         $endpointProvider = new EndpointProvider($this->router);
         $endpoint = $endpointProvider->resolve(static::$request->method, static::$request->urlPath);
 
-        $next = fn (HttpRequest $request) => static::$request = $request;
+        $this->invokeAllMiddlewares($endpoint->middlewares);
 
-        foreach ($this->middlewares as $appMiddleware) {
-            $appMiddleware->invoke(static::$request, $next);
-        }
+        $this->invokeEndpoint($endpoint);
+    }
 
-        foreach ($endpoint->middlewares as $middleware) {
-            $middlewareInstance = $this->getInstance($middleware);
-            $middlewareInstance->invoke(static::$request, $next);
-        }
 
+    private function invokeEndpoint(EndpointResult $endpoint): void
+    {
         $endpointInstance = $this->getInstance($endpoint->endpointClass);
 
         $invocation = new ReflectionMethod($endpointInstance::class, '__invoke');
@@ -116,6 +114,24 @@ class App
         $methodParams = array_merge($methodParams, $endpoint->paramValues);
 
         $invocation->invokeArgs($endpointInstance, $methodParams);
+    }
+
+    /**
+     * Invokes app middlewares and also endpoint middlewares
+     * @param string[] $endpointMiddlewares classes of middlewares bound to the processing endpoint
+     */
+    private function invokeAllMiddlewares(array $endpointMiddlewares): void
+    {
+        $next = fn (HttpRequest $request) => static::$request = $request;
+
+        foreach ($this->middlewares as $appMiddleware) {
+            $appMiddleware->invoke(static::$request, $next);
+        }
+
+        foreach ($endpointMiddlewares as $middleware) {
+            $middlewareInstance = $this->getInstance($middleware);
+            $middlewareInstance->invoke(static::$request, $next);
+        }
     }
 
     /**
@@ -183,11 +199,8 @@ class App
 
         $request->method = $method;
         $request->urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $host =  gethostname();
-
-        if (!empty($host)) {
-            $request->host = $host;
-        }
+        $request->host = $_SERVER['HTTP_HOST'];
+        $request->userAgent = $_SERVER['HTTP_USER_AGENT'];
 
         $query = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
         if (!empty($query)) {

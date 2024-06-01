@@ -11,7 +11,6 @@ class ClassDescriptor
      */
     public function __construct(public readonly string $lifetime, public $factory = null, public ?object $instance = null)
     {
-
         if ($lifetime !== InstanceLifetime::TRANSIENT && $lifetime !== InstanceLifetime::SCOPED) {
             throw new Exception('Not acceptable value of [$lifetime] parameter.');
         }

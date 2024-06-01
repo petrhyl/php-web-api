@@ -12,10 +12,10 @@ class AppBuilder
 
     private function __construct()
     {
-        $this->Services = new Container();
+        $this->Container = new Container();
     }
 
-    public readonly Container $Services;
+    public readonly Container $Container;
 
     public static function createBuilder(): AppBuilder
     {
@@ -30,7 +30,7 @@ class AppBuilder
 
     public function buildApp(): App
     {
-        $provider = new InstanceProvider($this->Services);
+        $provider = new InstanceProvider($this->Container);
 
         $router = $provider->build(EndpointRouteBuilder::class);
 
