@@ -61,7 +61,7 @@ class EndpointNode
         }
 
         if (array_key_exists($nodeName, $this->childrenAsParams)) {
-            return $this->children[$nodeName];
+            return $this->childrenAsParams[$nodeName];
         }
 
         return null;
