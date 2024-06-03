@@ -25,7 +25,7 @@ class HttpResponse
 
         http_response_code($this->statusCode);
 
-        if (empty($this->errors) && empty($this->data) && $this->statusCode === 204) {
+        if (empty($this->errors) && $this->data === null) {
             return;
         }
 
