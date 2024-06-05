@@ -163,7 +163,7 @@ class App
 
                     $paramValues[$paramName] = $query;
                 } catch (\Throwable $th) {
-                    throw new ApplicationException("Missing or bad formatted required query parameter for the endpoint.", 400, $th->getCode(), [], $th);
+                    throw new ApplicationException("Missing or bad formatted required query parameter for the endpoint.", 400, 101, [], $th);
                 }
             }
         }
@@ -219,7 +219,6 @@ class App
         if (!empty($headers)) {
             $request->headers = $headers;
         }
-
 
         return $request;
     }

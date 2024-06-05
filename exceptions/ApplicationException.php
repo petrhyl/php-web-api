@@ -13,16 +13,6 @@ class ApplicationException extends Exception
         parent::__construct($message, $code, $previous);
 
         $this->innerErrors = $innerErrors;
-
-        while ($previous !== null) {
-            $this->innerErrors[] = [
-                "code" => $previous->getCode(),
-                "message" => $previous->getMessage(),
-                "file" => $previous->getFile(),
-                "line" => $previous->getLine()
-            ];
-            $previous = $previous->getPrevious();
-        }
     }
 
     public function getHttpStatusCode(): int
