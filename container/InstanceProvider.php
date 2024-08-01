@@ -91,18 +91,16 @@ class InstanceProvider
             $name = $type->getName();
 
             // Resolve a class based dependency from the container.
-            try {
+            if ($this->container->isClassNameAdded($name)) {
                 $dependency = $this->get($name);
                 $dependencies[] = $dependency;
-            } catch (Exception $e) {
-                if ($parameter->isOptional()) {
-                    $dependencies[] = $parameter->getDefaultValue();
-                } else {
-                    $dependency = $this->build($name);
-                    $descriptor = new ClassDescriptor(InstanceLifetime::TRANSIENT, fn () => $this->build($name));
-                    $this->container->bindDescriptor($name, $descriptor);
-                    $dependencies[] = $dependency;
-                }
+            } elseif ($parameter->isOptional()) {
+                $dependencies[] = $parameter->getDefaultValue();
+            } else {
+                $dependency = $this->build($name);
+                $descriptor = new ClassDescriptor(InstanceLifetime::TRANSIENT, fn () => $this->build($name));
+                $this->container->bindDescriptor($name, $descriptor);
+                $dependencies[] = $dependency;
             }
         }
 
