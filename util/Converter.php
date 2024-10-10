@@ -41,6 +41,25 @@ class Converter
             }
 
             if ($propType->isBuiltin()) {
+                if (is_array($assocArray[$propName])) {
+                    $docComment = $prop->getDocComment();
+                    $propertyClass = self::getArrayItemClassFromDocComment($docComment ? $docComment : null);
+
+                    if ($propertyClass !== null) {
+                        if (class_exists($propertyClass)) {
+                            $items = [];
+
+                            foreach ($assocArray[$propName] as $itemData) {
+                                $items[] = self::convertAssocArrayToObject($propertyClass, $itemData);
+                            }
+
+                            $classInstance->$propName = $items;
+
+                            continue;
+                        }
+                    }
+                }
+
                 $prop->setValue($classInstance, $assocArray[$propName]);
             } else {
                 $propInstance = self::convertAssocArrayToObject($propType->getName(), $assocArray[$propName]);
@@ -49,5 +68,16 @@ class Converter
         }
 
         return $classInstance;
+    }
+
+    private static  function getArrayItemClassFromDocComment(?string $docComment): ?string
+    {
+        if (empty($docComment)) {
+            return null;
+        }
+
+        if (preg_match('/@var\s+([^\[\]]+)\[\]/', $docComment, $matches)) {
+            return $matches[1];
+        }
     }
 }

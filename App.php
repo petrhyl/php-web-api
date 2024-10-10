@@ -208,7 +208,7 @@ class App
             $request->queryParams = $queries;
         }
 
-        try {
+        try {            
             $request->body = json_decode(file_get_contents("php://input"), true);
         } catch (\Throwable $th) {
             $request->body = null;
