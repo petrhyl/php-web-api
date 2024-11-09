@@ -79,5 +79,7 @@ class Converter
         if (preg_match('/@var\s+([^\[\]]+)\[\]/', $docComment, $matches)) {
             return $matches[1];
         }
+
+        return null;
     }
 }
