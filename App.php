@@ -106,14 +106,14 @@ class App
     {
         $endpointInstance = $this->getInstance($endpoint->endpointClass);
 
-        $invocation = new ReflectionMethod($endpointInstance::class, '__invoke');
-        $params = $invocation->getParameters();
+        $invocationMethod = new ReflectionMethod($endpointInstance::class, '__invoke');
+        $params = $invocationMethod->getParameters();
 
-        $methodParams = $this->retrieveMethodParameters($params);
+        $methodParams = $this->retrieveValuesForPayloadAndQuery($params);
 
         $methodParams = array_merge($methodParams, $endpoint->paramValues);
 
-        $invocation->invokeArgs($endpointInstance, $methodParams);
+        $invocationMethod->invokeArgs($endpointInstance, $methodParams);
     }
 
     /**
@@ -138,10 +138,10 @@ class App
      * @param ReflectionParameter[] $params array that contains endpoint's `invoke()` method parameters.
      * Type of parameter of name 'payload' will be use to convert request body.
      * Type of parameter of name 'query' will be use to convert request url query parameters.
-     * @return KeyValuePair[] array that contains keys as names of method's parameters ('payload' or 'query') and values as parameters' values
+     * @return array contains keys as names of method's parameters ('payload' or 'query') and values as parameters' values
      * @throws ApplicationException
      */
-    private function retrieveMethodParameters(array $params): array
+    private function retrieveValuesForPayloadAndQuery(array $params): array
     {
         $paramValues = [];
 
@@ -162,6 +162,10 @@ class App
                     $query = $this->retrieveDataForParameter(static::$request->queryParams, $param);
 
                     $paramValues[$paramName] = $query;
+                }catch(ApplicationException $appEx){
+                    if (!$param->isOptional()) {
+                        throw new ApplicationException("Missing or bad formatted required query parameter for the endpoint.", 400, 101, [], $appEx);
+                    }
                 } catch (\Throwable $th) {
                     throw new ApplicationException("Missing or bad formatted required query parameter for the endpoint.", 400, 101, [], $th);
                 }
