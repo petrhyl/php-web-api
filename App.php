@@ -122,7 +122,7 @@ class App
      */
     private function invokeAllMiddlewares(array $endpointMiddlewares): void
     {
-        $next = fn (HttpRequest $request) => static::$request = $request;
+        $next = fn(HttpRequest $request) => static::$request = $request;
 
         foreach ($this->middlewares as $appMiddleware) {
             $appMiddleware->invoke(static::$request, $next);
