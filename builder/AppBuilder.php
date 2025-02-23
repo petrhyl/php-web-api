@@ -1,9 +1,10 @@
 <?php
 
-namespace WebApiCore\Container;
+namespace WebApiCore\Builder;
 
-use WebApiCore\App;
 use Exception;
+use WebApiCore\Container\Container;
+use WebApiCore\Container\Provider\InstanceProvider;
 use WebApiCore\Routes\EndpointRouteBuilder;
 
 class AppBuilder

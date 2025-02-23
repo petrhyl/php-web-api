@@ -2,10 +2,13 @@
     "autoload": {
         "psr-4": {
             "WebApiCore\\":"./",
+            "WebApiCore\\Builder\\": "./builder/",
+            "WebApiCore\\Container\\": "./container/",
+            "WebApiCore\\Container\\Provider\\": "./container/provider",
+            "WebApiCore\\Container\\Descriptor\\": "./container/descriptor",
             "WebApiCore\\Http\\": "./http/",
             "WebApiCore\\Routes\\": "./routes/",
             "WebApiCore\\Routes\\Callables\\": "./routes/callables/",
-            "WebApiCore\\Container\\": "./container/",
             "WebApiCore\\Util\\": "./util/",
             "WebApiCore\\Interfaces\\": "./interfaces/",
             "WebApiCore\\Exceptions\\": "./exceptions/"

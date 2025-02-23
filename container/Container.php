@@ -3,14 +3,17 @@
 namespace WebApiCore\Container;
 
 use Exception;
+use WebApiCore\Container\Descriptor\ClassDescriptor;
+use WebApiCore\Container\Provider\InstanceLifetime;
+use WebApiCore\Container\Provider\InstanceProvider;
 
 class Container
 {
     private array $descriptors = [];
 
     /**
-     * @param string $className is name of a class or interface which instance is provided by @see {\WebApiCore\Container\ClassDescriptor}
-     * @param ClassDescriptor $descriptor providing either class instance or callback to create instance with @see {\WebApiCore\Container\InstanceProvider}
+     * @param string $className is name of a class or interface which instance is provided by {@see WebApiCore\Container\Descriptor\ClassDescriptor}
+     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Provider\InstanceProvider}
      */
     public function bindDescriptor(string $className, ClassDescriptor $descriptor): void
     {
@@ -24,14 +27,19 @@ class Container
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
      * @param callable $factory function which returns new instance of bound class. 
-     * Receives a @see{\WebApiCore\Container\InstanceProvider} as a parameter.
-     * @param string $lifetime value of constant from @see{\WebApiCore\Container\InstanceLifetime}
+     * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
+     * @param \WebApiCore\Container\Provider\InstanceLifetime $lifetime enum value of {@see WebApiCore\Container\Provider\InstanceLifetime}
      * @example : 
-     * $container = new Container();
+     * ```php
+     * $builder = AppBuilder::createBuilder();
      * 
-     * $container->bind(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * $builder->Container->bind(
+     *  MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args), InstanceLifetime::Scoped
+     * );
+     * 
+     * ```
      */
-    public function bind(string $className, callable $factory, string $lifetime): void
+    public function bind(string $className, callable $factory, InstanceLifetime $lifetime): void
     {
         if (!is_callable($factory)) {
             throw new Exception("The function for creating an instance of class [$className] is not provided.");
@@ -48,30 +56,46 @@ class Container
 
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
-     * @param callable $factory function which returns new instance of bound class. 
-     * Receives a @see{\WebApiCore\Container\InstanceProvider} as a parameter.
+     * @param callable|null $factory function which returns new instance of bound class
+     * * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
+     * * If the $factory parameter is not provided, the instance and its constructor parameters will be build using reflection.
      * @example : 
-     * $container = new Container();
+     * ```php
+     * $builder = AppBuilder::createBuilder();
      * 
-     * $container->bind(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * $builder->Container->bindTransient(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * 
+     * ```
      */
-    public function bindTransient(string $className, callable $factory): void
+    public function bindTransient(string $className, ?callable $factory = null): void
     {
-        $this->bind($className, $factory, InstanceLifetime::TRANSIENT);
+        if ($factory === null) {
+            $factory = fn(InstanceProvider $provider) => $provider->build($className);
+        }
+
+        $this->bind($className, $factory, InstanceLifetime::Transient);
     }
 
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
-     * @param callable $factory function which returns new instance of bound class. 
-     * Receives a @see{\WebApiCore\Container\InstanceProvider} as a parameter.
+     * @param callable|null $factory function which returns new instance of bound class. 
+     * * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
+     * * If the $factory parameter is not provided, the instance and its constructor parameters will be build using reflection.
      * @example : 
-     * $container = new Container();
+     * ```php
+     * $builder = AppBuilder::createBuilder();
      * 
-     * $container->bind(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * $builder->Container->bindScoped(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * 
+     * ```
      */
-    public function bindScoped(string $className, callable $factory): void
+    public function bindScoped(string $className, ?callable $factory = null): void
     {
-        $this->bind($className, $factory, InstanceLifetime::SCOPED);
+        if ($factory === null) {
+            $factory = fn(InstanceProvider $provider) => $provider->build($className);
+        }
+
+        $this->bind($className, $factory, InstanceLifetime::Transient);
     }
 
     public function get(string $className): ClassDescriptor | null
@@ -86,8 +110,8 @@ class Container
     /**
      * If there is no class name provided by parameter `$existingClassName` in the container
      * no action will be executed otherwise old descriptor will be overridden by the new one.
-     * @param string $existingClassName is name of a class or interface which instance is provided by @see {\WebApiCore\Container\ClassDescriptor} and is already added to the container
-     * @param ClassDescriptor $descriptor providing either class instance or callback to create instance of with @see {\WebApiCore\Container\InstanceProvider} of already added class
+     * @param string $existingClassName is name of a class or interface which instance is provided by {@see WebApiCore\Container\Descriptor\ClassDescriptor} and is already added to the container
+     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Provider\InstanceProvider}
      * @return bool if there is a class provided by parameter `$existingClassName` in the container returns `true`
      * otherwise `false`
      */

@@ -1,11 +1,11 @@
 <?php
 
-namespace WebApiCore\Container;
+namespace WebApiCore\Container\Provider;
 
 use ArgumentCountError;
 use Exception;
 use WebApiCore\Container\Container;
-use WebApiCore\Container\ClassDescriptor;
+use WebApiCore\Container\Descriptor\ClassDescriptor;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
@@ -28,6 +28,7 @@ class InstanceProvider
         }
 
         $instance = $descriptor->instance;
+        
         if ($instance === null) {
             if ($descriptor->factory === null) {
                 throw new Exception("Missing factory for instantiate $class class.");
@@ -42,7 +43,7 @@ class InstanceProvider
             throw new Exception("Implamentation factory did not return instance of class [$class].");
         }
 
-        if ($descriptor->lifetime === InstanceLifetime::SCOPED) {
+        if ($descriptor->lifetime === InstanceLifetime::Scoped) {
             $descriptor->instance = $instance;
             $this->container->tryBindDescriptor($class, $descriptor);
         }
@@ -98,7 +99,7 @@ class InstanceProvider
                 $dependencies[] = $parameter->getDefaultValue();
             } else {
                 $dependency = $this->build($name);
-                $descriptor = new ClassDescriptor(InstanceLifetime::TRANSIENT, fn () => $this->build($name));
+                $descriptor = new ClassDescriptor(InstanceLifetime::Transient, fn () => $this->build($name));
                 $this->container->bindDescriptor($name, $descriptor);
                 $dependencies[] = $dependency;
             }

@@ -1,6 +1,6 @@
 <?php
 
-namespace WebApiCore;
+namespace WebApiCore\Builder;
 
 use WebApiCore\Exceptions\ApplicationException;
 use WebApiCore\Http\HttpRequest;
@@ -11,7 +11,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
-use WebApiCore\Container\InstanceProvider;
+use WebApiCore\Container\Provider\InstanceProvider;
 use WebApiCore\Routes\EndpointProvider;
 use WebApiCore\Routes\EndpointResult;
 
@@ -64,8 +64,8 @@ class App
     }
 
     /**
-     * @param string $className fully-qualified name of required class
-     * @return object instance of a class with all its dependecies from DI container 
+     * @param string $className fully-qualified name of a required class
+     * @return object instance of the class with all its dependecies from DI container 
      * or create a new instance if the class is not registered in the container.
      * @throws Exception
      */
@@ -81,7 +81,7 @@ class App
     }
 
     /**
-     * Process request to this API - create @see{WebApiCore\Http\HttpRequest}
+     * Process request to this API - create {@see WebApiCore\Http\HttpRequest}
      * @throws ApplicationException
      */
     public function process(): void
@@ -162,7 +162,7 @@ class App
                     $query = $this->retrieveDataForParameter(static::$request->queryParams, $param);
 
                     $paramValues[$paramName] = $query;
-                }catch(ApplicationException $appEx){
+                } catch (ApplicationException $appEx) {
                     if (!$param->isOptional()) {
                         throw new ApplicationException("Missing or bad formatted required query parameter for the endpoint.", 400, 101, [], $appEx);
                     }
