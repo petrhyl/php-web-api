@@ -3,9 +3,10 @@
 namespace WebApiCore\Container;
 
 use Exception;
+use WebApiCore\Configuration\ConfigurationManager;
 use WebApiCore\Container\Descriptor\ClassDescriptor;
-use WebApiCore\Container\Provider\InstanceLifetime;
-use WebApiCore\Container\Provider\InstanceProvider;
+use WebApiCore\Container\Instance\Provider\InstanceLifetime;
+use WebApiCore\Container\Instance\Provider\InstanceProvider;
 
 class Container
 {
@@ -13,7 +14,7 @@ class Container
 
     /**
      * @param string $className is name of a class or interface which instance is provided by {@see WebApiCore\Container\Descriptor\ClassDescriptor}
-     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Provider\InstanceProvider}
+     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Instance\Provider\InstanceProvider}
      */
     public function bindDescriptor(string $className, ClassDescriptor $descriptor): void
     {
@@ -27,14 +28,14 @@ class Container
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
      * @param callable $factory function which returns new instance of bound class. 
-     * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
-     * @param \WebApiCore\Container\Provider\InstanceLifetime $lifetime enum value of {@see WebApiCore\Container\Provider\InstanceLifetime}
+     * Receives a {@see WebApiCore\Container\Instance\Provider\InstanceProvider} as a parameter.
+     * @param \WebApiCore\Container\Instance\Provider\InstanceLifetime $lifetime enum value of {@see WebApiCore\Container\Instance\Provider\InstanceLifetime}
      * @example : 
      * ```php
      * $builder = AppBuilder::createBuilder();
      * 
      * $builder->Container->bind(
-     *  MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args), InstanceLifetime::Scoped
+     *  MyService::class, fn (\WebApiCore\Container\Instance\Provider\InstanceProvider $provider) => new MyService($args), InstanceLifetime::Scoped
      * );
      * 
      * ```
@@ -57,13 +58,13 @@ class Container
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
      * @param callable|null $factory function which returns new instance of bound class
-     * * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
+     * * Receives a {@see WebApiCore\Container\Instance\Provider\InstanceProvider} as a parameter.
      * * If the $factory parameter is not provided, the instance and its constructor parameters will be build using reflection.
      * @example : 
      * ```php
      * $builder = AppBuilder::createBuilder();
      * 
-     * $builder->Container->bindTransient(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * $builder->Container->bindTransient(MyService::class, fn (\WebApiCore\Container\Instance\Provider\InstanceProvider $provider) => new MyService($args));
      * 
      * ```
      */
@@ -79,13 +80,13 @@ class Container
     /**
      * @param string $className is name of a class or interface which instance is provided by the $factory parameter.
      * @param callable|null $factory function which returns new instance of bound class. 
-     * * Receives a {@see WebApiCore\Container\Provider\InstanceProvider} as a parameter.
+     * * Receives a {@see WebApiCore\Container\Instance\Provider\InstanceProvider} as a parameter.
      * * If the $factory parameter is not provided, the instance and its constructor parameters will be build using reflection.
      * @example : 
      * ```php
      * $builder = AppBuilder::createBuilder();
      * 
-     * $builder->Container->bindScoped(MyService::class, fn (\WebApiCore\Container\InstanceProvider $provider) => new MyService($args));
+     * $builder->Container->bindScoped(MyService::class, fn (\WebApiCore\Container\Instance\Provider\InstanceProvider $provider) => new MyService($args));
      * 
      * ```
      */
@@ -111,7 +112,7 @@ class Container
      * If there is no class name provided by parameter `$existingClassName` in the container
      * no action will be executed otherwise old descriptor will be overridden by the new one.
      * @param string $existingClassName is name of a class or interface which instance is provided by {@see WebApiCore\Container\Descriptor\ClassDescriptor} and is already added to the container
-     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Provider\InstanceProvider}
+     * @param ClassDescriptor $descriptor providing either a class instance or a function to create the instance by {@see WebApiCore\Container\Instance\Provider\InstanceProvider}
      * @return bool if there is a class provided by parameter `$existingClassName` in the container returns `true`
      * otherwise `false`
      */
@@ -129,5 +130,20 @@ class Container
     public function isClassNameAdded($className): bool
     {
         return array_key_exists($className, $this->descriptors);
+    }
+
+    /**
+     * adds a configuration as a scoped instance to the container
+     * @param string $className name of the class that will be configured with the configuration data from a section of the configuration data array given by the $configurationPath
+     * * class to be configured can not have a constructor
+     * @param string $configurationPath string that contains keys that will be used to get nested array from the configuration data array
+     * * each key in the $path has to be separated by {@see WebApiCore\Configuration\ConfigurationSource::CONFIGURATION_PATH_DELIMITER}
+     */
+    public function configure(string $className, string $configurationPath, ConfigurationManager $configuration): void
+    {
+        $instance = $configuration->configure($className, $configurationPath);
+
+        $descriptor = new ClassDescriptor(InstanceLifetime::Scoped, null, $instance);
+        $this->bindDescriptor($className, $descriptor);
     }
 }

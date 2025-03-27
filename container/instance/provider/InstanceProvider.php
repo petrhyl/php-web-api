@@ -1,6 +1,6 @@
 <?php
 
-namespace WebApiCore\Container\Provider;
+namespace WebApiCore\Container\Instance\Provider;
 
 use ArgumentCountError;
 use Exception;

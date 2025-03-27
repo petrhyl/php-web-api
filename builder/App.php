@@ -11,7 +11,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
-use WebApiCore\Container\Provider\InstanceProvider;
+use WebApiCore\Container\Instance\Provider\InstanceProvider;
 use WebApiCore\Routes\EndpointProvider;
 use WebApiCore\Routes\EndpointResult;
 

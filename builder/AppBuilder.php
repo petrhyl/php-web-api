@@ -3,22 +3,26 @@
 namespace WebApiCore\Builder;
 
 use Exception;
+use WebApiCore\Configuration\ConfigurationManager;
+use WebApiCore\Configuration\ConfigurationOptions;
 use WebApiCore\Container\Container;
-use WebApiCore\Container\Provider\InstanceProvider;
+use WebApiCore\Container\Instance\Provider\InstanceProvider;
 use WebApiCore\Routes\EndpointRouteBuilder;
 
 class AppBuilder
 {
     private static ?AppBuilder $appBuilder = null;
+    public readonly Container $Container;
+    public readonly ConfigurationManager $Configuration;
 
-    private function __construct()
-    {
+    private function __construct(
+        ?ConfigurationOptions $options = null
+    ) {
         $this->Container = new Container();
+        $this->Configuration = new ConfigurationManager($options);
     }
 
-    public readonly Container $Container;
-
-    public static function createBuilder(): AppBuilder
+    public static function createBuilder(?ConfigurationOptions $options = null): AppBuilder
     {
         if (self::$appBuilder !== null) {
             throw new Exception('Application builder is already created.');
@@ -27,7 +31,7 @@ class AppBuilder
         self::$appBuilder = new AppBuilder();
 
         return self::$appBuilder;
-    }
+    }    
 
     public function buildApp(): App
     {

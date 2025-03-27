@@ -3,8 +3,9 @@
         "psr-4": {
             "WebApiCore\\":"./",
             "WebApiCore\\Builder\\": "./builder/",
+            "WebApiCore\\Configuration\\": "./configuration",
             "WebApiCore\\Container\\": "./container/",
-            "WebApiCore\\Container\\Provider\\": "./container/provider",
+            "WebApiCore\\Container\\Instance\\Provider\\": "./container/instance/provider",
             "WebApiCore\\Container\\Descriptor\\": "./container/descriptor",
             "WebApiCore\\Http\\": "./http/",
             "WebApiCore\\Routes\\": "./routes/",
