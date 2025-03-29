@@ -4,6 +4,7 @@ namespace WebApiCore\Configuration;
 
 use ReflectionClass;
 use WebApiCore\Util\Constants;
+use WebApiCore\Util\Converter;
 
 class ConfigurationManager
 {
@@ -66,36 +67,6 @@ class ConfigurationManager
 
     private function buildConfiguration(string $class, array $data): object
     {
-        $reflectionClass = new ReflectionClass($class);
-
-        $instance = $reflectionClass->newInstanceWithoutConstructor();
-        $properties = $reflectionClass->getProperties();
-
-        foreach ($properties as $property) {
-            $propertyName = $property->getName();
-
-            if (!array_key_exists($propertyName, $data)) {
-                continue;
-            }
-
-            $propertyType = $property->getType();
-
-            $dataValue = $data[$propertyName];
-
-            if (!$propertyType->isBuiltin()) {
-                if (is_array($dataValue)) {
-                    $propertyValue = $this->buildConfiguration($propertyType->getName(), $dataValue);
-                } else {
-                    continue;
-                }
-            }
-
-            $propertyValue = $dataValue;
-
-            $property->setAccessible(true);
-            $property->setValue($instance, $propertyValue);
-        }
-
-        return $instance;
+        return Converter::convertAssocArrayToObject($class, $data);
     }
 }

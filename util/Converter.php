@@ -3,6 +3,7 @@
 namespace WebApiCore\Util;
 
 use ReflectionClass;
+use ReflectionProperty;
 
 class Converter
 {
@@ -21,10 +22,6 @@ class Converter
         $classInstance = $classReflection->newInstance();
 
         foreach ($properties as $prop) {
-            if (!$prop->isPublic()) {
-                continue;
-            }
-
             $propName = $prop->getName();
             $propType = $prop->getType();
 
@@ -40,31 +37,16 @@ class Converter
                 throw new \Exception("Not able to deserialize array into type of '" . $classInstance::class . "'. Missing value for property '$propName'");
             }
 
+            $dataValue = $assocArray[$propName];
+            $propValue = null;
+
             if ($propType->isBuiltin()) {
-                if (is_array($assocArray[$propName])) {
-                    $docComment = $prop->getDocComment();
-                    $propertyClass = self::getArrayItemClassFromDocComment($docComment ? $docComment : null);
-
-                    if ($propertyClass !== null) {
-                        if (class_exists($propertyClass)) {
-                            $items = [];
-
-                            foreach ($assocArray[$propName] as $itemData) {
-                                $items[] = self::convertAssocArrayToObject($propertyClass, $itemData);
-                            }
-
-                            $classInstance->$propName = $items;
-
-                            continue;
-                        }
-                    }
-                }
-
-                $prop->setValue($classInstance, $assocArray[$propName]);
+                $propValue = self::resolveBuildInTypeValue($dataValue, $prop);
             } else {
-                $propInstance = self::convertAssocArrayToObject($propType->getName(), $assocArray[$propName]);
-                $prop->setValue($classInstance, $propInstance);
+                $propValue = self::convertAssocArrayToObject($propType->getName(), $assocArray[$propName]);
             }
+
+            $prop->setValue($classInstance, $propValue);
         }
 
         return $classInstance;
@@ -81,5 +63,26 @@ class Converter
         }
 
         return null;
+    }
+
+    private static function resolveBuildInTypeValue(mixed $dataValue, ReflectionProperty $currentProp): mixed
+    {
+        if (!is_array($dataValue)) {
+            return $dataValue;
+        }
+
+        $docComment = $currentProp->getDocComment();
+        $propertyClass = self::getArrayItemClassFromDocComment($docComment ? $docComment : null);
+
+        if ($propertyClass === null || !class_exists($propertyClass)) {
+            return $dataValue;
+        }
+
+        $items = [];
+        foreach ($dataValue as $itemData) {
+            $items[] = self::convertAssocArrayToObject($propertyClass, $itemData);
+        }
+
+        return $items;
     }
 }
